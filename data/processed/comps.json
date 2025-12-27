@@ -1,0 +1,162 @@
+[
+  {
+    "comp_id": "B4L_Ryze",
+    "patch": "16.1",
+    "tier": "S",
+    "difficulty": "Medium",
+    "final_level": 9,
+    "final_units": [
+      "Ryze",
+      "Wukong",
+      "Yunara",
+      "Taric",
+      "Lissandra",
+      "Kennen",
+      "Kobuko",
+      "Sejuani",
+      "Ashe"
+    ],
+    "4": [
+      "Jhin",
+      "Sion",
+      "Yasuo",
+      "Shen"
+    ],
+    "6": [
+      "Jhin",
+      "Kennen",
+      "Poppy",
+      "Tristana",
+      "XinZhao",
+      "JarvanIV"
+    ]
+  },
+  {
+    "comp_id": "Fast9_Fleet",
+    "patch": "16.1",
+    "tier": "S",
+    "difficulty": "Hard",
+    "final_level": 9,
+    "final_units": [
+      "Lucian",
+      "TahmKench",
+      "MissFortune",
+      "Nautilus",
+      "Fiddlesticks",
+      "Ornn",
+      "Shyvana",
+      "Taric",
+      "Wukong"
+    ],
+    "4": [
+      "Graves",
+      "Sion",
+      "TwistedFate",
+      "Illaoi"
+    ],
+    "6": [
+      "Graves",
+      "Gangplank",
+      "Nautilus",
+      "Sion",
+      "TwistedFate",
+      "Illaoi"
+    ]
+  },
+  {
+    "comp_id": "Shurima_Shuffle",
+    "patch": "16.1",
+    "tier": "S",
+    "difficulty": "Hard",
+    "final_level": 9,
+    "final_units": [
+      "Annie",
+      "Azir",
+      "Tibbers",
+      "Renekton",
+      "Xerath",
+      "Seraphine",
+      "Swain",
+      "Neeko",
+      "Vi"
+    ],
+    "4": [
+      "Graves",
+      "Sion",
+      "TwistedFate",
+      "Illaoi"
+    ],
+    "6": [
+      "Graves",
+      "Gangplank",
+      "Nautilus",
+      "Sion",
+      "TwistedFate",
+      "Illaoi"
+    ]
+  },
+  {
+    "comp_id": "Fast9_Ionia",
+    "patch": "16.1",
+    "tier": "S",
+    "difficulty": "Medium",
+    "final_level": 9,
+    "final_units": [
+      "Kindred",
+      "Sett",
+      "Wukong",
+      "Yunara",
+      "Fiddlesticks",
+      "Lucian",
+      "Taric",
+      "Jhin",
+      "Shen"
+    ],
+    "4": [
+      "Jhin",
+      "Tristana",
+      "XinZhao",
+      "Shen"
+    ],
+    "6": [
+      "Jhin",
+      "Ahri",
+      "Tristana",
+      "XinZhao",
+      "Yasuo",
+      "Shen"
+    ]
+  },
+  {
+    "comp_id": "Noxus_Deathmark",
+    "patch": "16.1",
+    "tier": "S",
+    "difficulty": "Medium",
+    "final_level": 9,
+    "final_units": [
+      "Kindred",
+      "Lucian",
+      "Skarner",
+      "Fiddlesticks",
+      "Shyvana",
+      "Ambessa",
+      "Swain",
+      "Taric",
+      "Draven"
+    ],
+    "4": [
+      "Draven",
+      "Sion",
+      "Briar",
+      "Viego"
+    ],
+    "6": [
+      "Draven",
+      "Nautilus",
+      "Gangplank",
+      "Sion",
+      "TwistedFate",
+      "Briar"
+    ]
+  }
+]
