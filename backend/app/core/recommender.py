@@ -64,11 +64,36 @@ def get_recommendation(board, level):
 
     return best_comp
 
+
+def format_top_k_recommendations(top_k_comps, board, level):
+    results = []
+
+    for rank, comp in enumerate(top_k_comps, start=1):
+        results.append({
+            "rank": rank,
+            "comp_id": comp.get("comp_id"),
+            "tier": comp.get("tier"),
+            "difficulty": comp.get("difficulty"),
+            "final_units": comp.get("final_units")
+        })
+
+    return {
+        "input": {
+            "board": board,
+            "level": level
+        },
+        "recommendations": results
+    }
+
 def get_top_k_recommendations(board, level, k=3):
     comps = load_comps()
     top_k_comps = recommend_top_k(comps, board, level, k=3)
+    format_top_k_comps = format_top_k_recommendations(top_k_comps, board, level)
 
-    return top_k_comps
+    return format_top_k_comps
+
+
+
 
 
 
