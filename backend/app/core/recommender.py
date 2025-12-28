@@ -40,6 +40,17 @@ def recommend(comps, board, level):
 
     return best_comp
 
+
+def recommend_top_k(comps, board, level, k=3):
+    res = []
+    for comp in comps:
+        score = score_of_comp(comp, board, level)
+        res.append((score, comp))
+
+    res = sorted(res, reverse=True, key=lambda x: x[0])[:k]
+    return list(map(lambda x: x[1], res))
+
+
 #API
 def get_recommendation(board, level):
     """
@@ -52,6 +63,12 @@ def get_recommendation(board, level):
     best_comp = recommend(comps, board, level)
 
     return best_comp
+
+def get_top_k_recommendations(board, level, k=3):
+    comps = load_comps()
+    top_k_comps = recommend_top_k(comps, board, level, k=3)
+
+    return top_k_comps
 
 
 
