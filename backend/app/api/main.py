@@ -15,6 +15,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
+@app.get("/")
+def root():
+    return {
+        "message": "TFT Recommendation API is running",
+        "docs": "/docs"
+    }
+
+
 class RecommendRequest(BaseModel):
     board: List[str]
     level: int
