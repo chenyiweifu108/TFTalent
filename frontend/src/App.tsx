@@ -13,7 +13,7 @@ const HERO_POOL = {
   ],
   2: [
     "Aphelios", "Ashe", "Bard", "Cho’Gath", "Ekko",
-    "Graves", "Neeko", "Orianna", "Nidalee", "Poppy",
+    "Graves", "Neeko", "Orianna", "Poppy",
     "Rek'Sai", "Sion", "Teemo", "Tristana", "Tryndamere",
     "Twisted Fate", "Vi", "Xin Zhao", "Yasuo", "Yorick"
   ],
