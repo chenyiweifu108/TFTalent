@@ -1,31 +1,22 @@
 import { useState } from "react";
 
-/** Tier 颜色映射 */
-const tierColor = (tier: string) => {
-  switch (tier) {
-    case "S":
-      return "#22c55e";
-    case "A":
-      return "#3b82f6";
-    case "B":
-      return "#facc15";
-    default:
-      return "#9ca3af";
-  }
+type Recommendation = {
+  rank: number;
+  comp_id: string;
+  tier: string;
+  difficulty: string;
+  final_units: string[];
 };
 
 function App() {
   const [board, setBoard] = useState("Jhin,Shen");
   const [level, setLevel] = useState(6);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<Recommendation[] | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchRecommendation = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      setError(null);
-
       const res = await fetch(
         "https://tftalent-3.onrender.com/recommendations",
         {
@@ -34,20 +25,17 @@ function App() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            board: board.split(","),
+            board: board.split(",").map((b) => b.trim()),
             level: Number(level),
           }),
         }
       );
 
-      if (!res.ok) {
-        throw new Error("Failed to fetch recommendation");
-      }
-
       const data = await res.json();
-      setResult(data);
-    } catch (err: any) {
-      setError("Failed to fetch recommendation. Please try again.");
+      setResult(data.recommendations);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to fetch recommendation");
     } finally {
       setLoading(false);
     }
@@ -56,114 +44,122 @@ function App() {
   return (
     <div
       style={{
-        padding: 40,
-        maxWidth: 700,
-        margin: "0 auto",
+        minHeight: "100vh",
+        background: "#1f1f1f",
+        color: "white",
+        padding: "40px",
         fontFamily: "Arial, sans-serif",
       }}
     >
-      <h1>🔥 TFT Composition Recommender</h1>
+      <h1 style={{ fontSize: 48 }}>🔥 TFT Composition Recommender</h1>
 
-      {/* Input Area */}
-      <div style={{ marginBottom: 16 }}>
-        <label>Board:</label>
-        <input
-          value={board}
-          onChange={(e) => setBoard(e.target.value)}
-          style={{ marginLeft: 10, padding: 6, width: 250 }}
-        />
+      {/* Input */}
+      <div style={{ marginTop: 20 }}>
+        <div style={{ marginBottom: 10 }}>
+          <label>Board:</label>
+          <input
+            style={inputStyle}
+            value={board}
+            onChange={(e) => setBoard(e.target.value)}
+          />
+        </div>
+
+        <div style={{ marginBottom: 10 }}>
+          <label>Level:</label>
+          <input
+            type="number"
+            style={inputStyle}
+            value={level}
+            onChange={(e) => setLevel(Number(e.target.value))}
+          />
+        </div>
+
+        <button style={buttonStyle} onClick={fetchRecommendation}>
+          {loading ? "Loading..." : "Recommend"}
+        </button>
       </div>
-
-      <div style={{ marginBottom: 16 }}>
-        <label>Level:</label>
-        <input
-          type="number"
-          value={level}
-          onChange={(e) => setLevel(Number(e.target.value))}
-          style={{ marginLeft: 10, padding: 6, width: 80 }}
-        />
-      </div>
-
-      <button
-        onClick={fetchRecommendation}
-        style={{
-          padding: "8px 16px",
-          borderRadius: 6,
-          border: "none",
-          background: "#6366f1",
-          color: "white",
-          cursor: "pointer",
-        }}
-      >
-        Recommend
-      </button>
-
-      {/* Loading */}
-      {loading && <p style={{ marginTop: 20 }}>🔄 Calculating best comp...</p>}
-
-      {/* Error */}
-      {error && (
-        <p style={{ marginTop: 20, color: "red" }}>{error}</p>
-      )}
 
       {/* Result */}
-      {result && result.recommendations && (
-        <div style={{ marginTop: 30 }}>
-          {result.recommendations.map((rec: any, idx: number) => (
-            <div
-              key={rec.comp_id}
-              style={{
-                border: "1px solid #e5e7eb",
-                borderRadius: 12,
-                padding: 16,
-                marginBottom: 16,
-                background: "#ffffff",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
-              }}
-            >
-              {/* Header */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <h3 style={{ margin: 0 }}>
-                  #{idx + 1} {rec.comp_id}
-                </h3>
-                <span
-                  style={{
-                    padding: "4px 10px",
-                    borderRadius: 8,
-                    background: tierColor(rec.tier),
-                    color: "white",
-                    fontWeight: 600,
-                  }}
-                >
-                  {rec.tier}
-                </span>
-              </div>
-
-              {/* Body */}
-              <div style={{ marginTop: 10 }}>
-                <p>
-                  <strong>Final Level:</strong> {rec.final_level}
-                </p>
-                <p>
-                  <strong>Difficulty:</strong> {rec.difficulty}
-                </p>
-                <p>
-                  <strong>Units:</strong>{" "}
-                  {rec.final_units.join(", ")}
-                </p>
-              </div>
+      <div style={{ marginTop: 40 }}>
+        {result?.map((rec, idx) => (
+          <div key={idx} style={cardStyle}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <h2>
+                #{idx + 1} {rec.comp_id}
+              </h2>
+              <span style={tierBadge}>{rec.tier}</span>
             </div>
-          ))}
-        </div>
-      )}
+
+            <p>
+              <strong>Difficulty:</strong> {rec.difficulty}
+            </p>
+
+            <p>
+              <strong>Units:</strong>
+            </p>
+            <div style={unitWrapper}>
+              {rec.final_units.map((u) => (
+                <span key={u} style={unitTag}>
+                  {u}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+
+/* ---------- Styles ---------- */
+
+const inputStyle: React.CSSProperties = {
+  marginLeft: 10,
+  padding: "6px 10px",
+  borderRadius: 6,
+  border: "1px solid #555",
+  background: "#2a2a2a",
+  color: "white",
+};
+
+const buttonStyle: React.CSSProperties = {
+  marginTop: 10,
+  padding: "10px 20px",
+  borderRadius: 8,
+  border: "none",
+  background: "#6366f1",
+  color: "white",
+  cursor: "pointer",
+  fontSize: 16,
+};
+
+const cardStyle: React.CSSProperties = {
+  background: "#ffffff",
+  color: "#111",
+  borderRadius: 12,
+  padding: 20,
+  marginBottom: 20,
+};
+
+const tierBadge: React.CSSProperties = {
+  background: "#22c55e",
+  color: "white",
+  padding: "6px 12px",
+  borderRadius: 8,
+  fontWeight: "bold",
+};
+
+const unitWrapper: React.CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 8,
+};
+
+const unitTag: React.CSSProperties = {
+  background: "#f3f4f6",
+  padding: "6px 10px",
+  borderRadius: 6,
+  fontSize: 14,
+};
 
 export default App;
