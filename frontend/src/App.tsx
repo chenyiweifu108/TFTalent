@@ -51,7 +51,7 @@ function App() {
         fontFamily: "Arial, sans-serif",
       }}
     >
-      <h1 style={{ fontSize: 48 }}>🔥 TFT Composition Recommender</h1>
+      <h1 style={{ fontSize: 48 }}> TFTalent Recommender</h1>
 
       {/* Input */}
       <div style={{ marginTop: 20 }}>
