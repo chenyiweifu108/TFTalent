@@ -1,213 +1,157 @@
 import { useState } from "react";
+import "./App.css";
 
-/* ===== 英雄池（后续可接真实数据） ===== */
-const ALL_UNITS = [
-  "Jhin",
-  "Shen",
-  "Yasuo",
-  "Ahri",
-  "Sett",
-  "Wukong",
-  "Lucian",
-  "Taric",
-  "Fiddlesticks",
-  "Kindred",
-];
+/* ======================
+   英雄数据
+====================== */
 
-/* ===== 数据类型 ===== */
-type Recommendation = {
-  rank: number;
-  comp_id: string;
-  tier: string;
-  difficulty: string;
-  final_units: string[];
+const HERO_POOL = {
+  1: [
+    "Anivia", "Blitzcrank", "Briar", "Caitlyn", "Illaoi",
+    "Jarvan IV", "Jhin", "Kog’Maw", "Lulu", "Qiyana",
+    "Rumble", "Shen", "Sona", "Viego"
+  ],
+  2: [
+    "Aphelios", "Ashe", "Bard", "Cho’Gath", "Ekko",
+    "Graves", "Neeko", "Orianna", "Nidalee", "Poppy",
+    "Rek'Sai", "Sion", "Teemo", "Tristana", "Tryndamere",
+    "Twisted Fate", "Vi", "Xin Zhao", "Yasuo", "Yorick"
+  ],
+  3: [
+    "Ahri", "Darius", "Dr. Mundo", "Draven", "Gangplank",
+    "Gwen", "Jinx", "Kennen", "Kobuko & Yuumi",
+    "LeBlanc", "Leona", "Loris", "Malzahar", "Milio",
+    "Nautilus", "Sejuani", "Vayne", "Zoe"
+  ],
+  4: [
+    "Ambessa", "Bel’Veth", "Braum", "Diana", "Fizz",
+    "Garen", "Kai’Sa", "Kalista", "Lissandra", "Lux",
+    "Miss Fortune", "Nasus", "Nidalee", "Renekton",
+    "Rift Herald", "Seraphine", "Singed", "Skarner",
+    "Swain", "Taric", "Veigar", "Warwick", "Wukong",
+    "Yone", "Yunara"
+  ],
+  5: [
+    "Aatrox", "Annie", "Aurelion Sol", "Azir",
+    "Baron Nashor", "Brock", "Fiddlesticks",
+    "Galio", "Kindred", "Lucian & Senna",
+    "Mel", "Ornn", "Ryze", "Sett",
+    "Shyvana", "Sylas", "Tahm Kench",
+    "T-Hex", "Thresh", "Volibear",
+    "Xerath", "Zaahen", "Ziggs", "Zilean"
+  ]
 };
 
-function App() {
-  const [board, setBoard] = useState<string[]>([]);
-  const [level, setLevel] = useState(6);
-  const [result, setResult] = useState<Recommendation[] | null>(null);
-  const [loading, setLoading] = useState(false);
+export default function App() {
+  const [selected, setSelected] = useState<string[]>([]);
+  const [result, setResult] = useState<any>(null);
 
-  /* ===== 点击英雄：加入 / 移除 ===== */
-  const toggleUnit = (unit: string) => {
-    setBoard((prev) =>
-      prev.includes(unit)
-        ? prev.filter((u) => u !== unit)
-        : [...prev, unit]
+  const toggleHero = (hero: string) => {
+    setSelected((prev) =>
+      prev.includes(hero)
+        ? prev.filter((h) => h !== hero)
+        : [...prev, hero]
     );
   };
 
-  /* ===== 请求后端 ===== */
   const fetchRecommendation = async () => {
-    try {
-      setLoading(true);
+    const res = await fetch(
+      "https://tftalent-3.onrender.com/recommendations",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          board: selected,
+          level: selected.length
+        }),
+      }
+    );
 
-      const res = await fetch(
-        "https://tftalent-3.onrender.com/recommendations",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            board: board,
-            level: level,
-          }),
-        }
-      );
-
-      const data = await res.json();
-      setResult(data.recommendations);
-    } catch (err) {
-      alert("Failed to fetch recommendation.");
-    } finally {
-      setLoading(false);
-    }
+    const data = await res.json();
+    setResult(data);
   };
 
   return (
-    <div style={pageStyle}>
+    <div style={{ padding: 32, color: "#fff" }}>
       <h1>🔥 TFT Composition Recommender</h1>
 
-      {/* ===== 英雄选择区 ===== */}
-      <h3>Select Your Board</h3>
-      <div style={unitGrid}>
-        {ALL_UNITS.map((unit) => (
-          <button
-            key={unit}
-            onClick={() => toggleUnit(unit)}
+      {/* 阵容区 */}
+      <h2>📋 当前阵容</h2>
+      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+        {selected.map((h) => (
+          <div
+            key={h}
+            onClick={() => toggleHero(h)}
             style={{
-              ...unitButton,
-              background: board.includes(unit)
-                ? "#dcfce7"
-                : "#f9f9f9",
-              border: board.includes(unit)
-                ? "2px solid #22c55e"
-                : "1px solid #ccc",
+              padding: "6px 12px",
+              border: "1px solid #888",
+              borderRadius: 6,
+              cursor: "pointer",
+              background: "#333",
             }}
           >
-            {unit}
-          </button>
+            {h}
+          </div>
         ))}
       </div>
 
-      {/* ===== Level ===== */}
-      <div style={{ marginTop: 20 }}>
-        <label>Level:</label>
-        <input
-          type="number"
-          value={level}
-          onChange={(e) => setLevel(Number(e.target.value))}
-          style={inputStyle}
-        />
-      </div>
-
-      {/* ===== Button ===== */}
-      <button style={buttonStyle} onClick={fetchRecommendation}>
-        {loading ? "Calculating..." : "Recommend"}
+      <button
+        onClick={fetchRecommendation}
+        style={{
+          marginTop: 20,
+          padding: "10px 20px",
+          fontSize: 16,
+          cursor: "pointer",
+        }}
+      >
+        Recommend
       </button>
 
-      {/* ===== 推荐结果 ===== */}
-      {result && (
-        <div style={{ marginTop: 40 }}>
-          {result.map((rec, idx) => (
-            <div key={idx} style={cardStyle}>
-              <div style={cardHeader}>
-                <h2>
-                  #{idx + 1} {rec.comp_id}
-                </h2>
-                <span style={tierBadge}>{rec.tier}</span>
-              </div>
+      {/* 英雄池 */}
+      <h2 style={{ marginTop: 40 }}>🧩 Hero Pool</h2>
 
-              <p><strong>Difficulty:</strong> {rec.difficulty}</p>
-
-              <p><strong>Units:</strong></p>
-              <div style={unitList}>
-                {rec.final_units.map((u) => (
-                  <span key={u} style={unitTag}>
-                    {u}
-                  </span>
-                ))}
+      {Object.entries(HERO_POOL).map(([cost, heroes]) => (
+        <div key={cost} style={{ marginBottom: 24 }}>
+          <h3>{cost} Cost</h3>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+            {heroes.map((hero) => (
+              <div
+                key={hero}
+                onClick={() => toggleHero(hero)}
+                style={{
+                  padding: "6px 10px",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  background: selected.includes(hero)
+                    ? "#4ade80"
+                    : "#222",
+                  color: selected.includes(hero)
+                    ? "#000"
+                    : "#fff",
+                }}
+              >
+                {hero}
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+      ))}
+
+      {/* 结果 */}
+      {result && (
+        <>
+          <h2>📊 Recommendation</h2>
+          <pre
+            style={{
+              background: "#111",
+              padding: 16,
+              borderRadius: 8,
+            }}
+          >
+            {JSON.stringify(result, null, 2)}
+          </pre>
+        </>
       )}
     </div>
   );
 }
-
-/* ===== Styles ===== */
-
-const pageStyle: React.CSSProperties = {
-  minHeight: "100vh",
-  background: "#1f1f1f",
-  color: "white",
-  padding: "40px",
-  fontFamily: "Arial, sans-serif",
-};
-
-const unitGrid: React.CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 10,
-};
-
-const unitButton: React.CSSProperties = {
-  padding: "8px 12px",
-  borderRadius: 6,
-  cursor: "pointer",
-  fontSize: 14,
-};
-
-const inputStyle: React.CSSProperties = {
-  marginLeft: 10,
-  padding: "6px",
-  borderRadius: 6,
-};
-
-const buttonStyle: React.CSSProperties = {
-  marginTop: 20,
-  padding: "10px 20px",
-  borderRadius: 8,
-  border: "none",
-  background: "#6366f1",
-  color: "white",
-  cursor: "pointer",
-  fontSize: 16,
-};
-
-const cardStyle: React.CSSProperties = {
-  background: "#fff",
-  color: "#000",
-  borderRadius: 12,
-  padding: 20,
-  marginBottom: 20,
-};
-
-const cardHeader: React.CSSProperties = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-};
-
-const tierBadge: React.CSSProperties = {
-  background: "#22c55e",
-  color: "white",
-  padding: "4px 10px",
-  borderRadius: 6,
-  fontWeight: "bold",
-};
-
-const unitList: React.CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 8,
-};
-
-const unitTag: React.CSSProperties = {
-  background: "#f3f4f6",
-  padding: "6px 10px",
-  borderRadius: 6,
-};
-
-export default App;
