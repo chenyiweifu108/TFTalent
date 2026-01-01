@@ -1,58 +1,42 @@
-/* 整个页面 */
 .app {
-  width: 100%;
   max-width: 1600px;
   margin: 0 auto;
   padding: 24px;
 }
 
-/* 顶部标题 */
 .title {
   font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
-/* 推荐按钮 */
 .recommend-btn {
-  margin-bottom: 20px;
   padding: 10px 16px;
   background: #3a3a3a;
   border-radius: 8px;
   border: none;
   color: white;
   cursor: pointer;
+  margin-bottom: 20px;
 }
 
-/* ===== 主体三栏布局 ===== */
 .main-layout {
   display: grid;
-  grid-template-columns: 1.2fr 1.2fr 2fr;
+  grid-template-columns: 1fr 1.2fr 1.6fr;
   gap: 20px;
-  align-items: start;
 }
 
-/* 卡片面板 */
 .panel {
   background: #2a2a2a;
   border-radius: 12px;
   padding: 16px;
-  min-height: 300px;
 }
 
-/* 标题 */
-.panel h2 {
-  margin-bottom: 12px;
-}
-
-/* 英雄网格 */
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 64px);
   gap: 10px;
 }
 
-/* 单个英雄 */
 .champion {
   text-align: center;
   cursor: pointer;
@@ -73,16 +57,18 @@
 
 .champion span {
   font-size: 12px;
-  margin-top: 4px;
-  display: block;
 }
 
-/* 英雄池 */
 .pool {
-  margin-top: 24px;
-  background: #232323;
-  padding: 16px;
-  border-radius: 12px;
-  max-height: 500px;
+  max-height: 70vh;
   overflow-y: auto;
+}
+
+.recommend-block {
+  margin-bottom: 16px;
+}
+
+.tier {
+  margin-left: 8px;
+  color: gold;
 }
