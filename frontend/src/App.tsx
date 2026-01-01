@@ -3,93 +3,115 @@ import { CHAMPIONS, type Champion } from "./data/champions";
 import "./App.css";
 
 export default function App() {
-  const [selected, setSelected] = useState<Champion[]>([]);
+  const [board, setBoard] = useState<Champion[]>([]);
+  const [recommendations, setRecommendations] = useState<any[]>([]);
 
-  /** 点击英雄 → 加入阵容 */
-  const addChampion = (champion: Champion) => {
-    if (selected.find(c => c.name === champion.name)) return;
-    if (selected.length >= 9) return;
-
-    setSelected([...selected, champion]);
+  /* 添加英雄 */
+  const addChampion = (c: Champion) => {
+    if (board.find(b => b.name === c.name)) return;
+    if (board.length >= 9) return;
+    setBoard([...board, c]);
   };
 
-  /** 点击阵容里的英雄 → 移除 */
+  /* 移除英雄 */
   const removeChampion = (name: string) => {
-    setSelected(selected.filter(c => c.name !== name));
+    setBoard(board.filter(c => c.name !== name));
   };
 
-  /** 按费用分组 */
-  const grouped = CHAMPIONS.reduce<Record<number, Champion[]>>((acc, cur) => {
-    acc[cur.cost] = acc[cur.cost] || [];
-    acc[cur.cost].push(cur);
-    return acc;
-  }, {});
+  /* 请求后端推荐 */
+  const fetchRecommendation = async () => {
+    const res = await fetch(
+      "https://tftalent-3.onrender.com/recommendations",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          board: board.map(b => b.name),
+          level: board.length,
+        }),
+      }
+    );
+
+    const data = await res.json();
+    setRecommendations(data.recommendations || []);
+  };
 
   return (
-    <div style={{ padding: 24 }}>
-      <h1>🔥 TFT Composition Recommender</h1>
+    <div className="app">
 
-      {/* ===== 已选阵容 ===== */}
-      <h2>当前阵容（点击移除）</h2>
-      <div style={boardStyle}>
-        {selected.map(champ => (
+      {/* ===== 当前阵容 ===== */}
+      <h1>🔥 TFT Composition Builder</h1>
+
+      <div className="board">
+        {board.map(champ => (
           <div
             key={champ.name}
-            style={championCard}
+            className="champion"
             onClick={() => removeChampion(champ.name)}
           >
-            <img src={champ.img} alt={champ.name} />
+            <img src={champ.img} />
             <span>{champ.name}</span>
           </div>
         ))}
-        {selected.length === 0 && (
-          <p style={{ color: "#888" }}>点击下方英雄添加</p>
-        )}
+        {board.length === 0 && <p>点击下方英雄添加</p>}
       </div>
 
-      {/* ===== 英雄池 ===== */}
-      {Object.entries(grouped).map(([cost, champs]) => (
-        <div key={cost}>
-          <h2>{cost} 费英雄</h2>
-          <div style={poolStyle}>
-            {champs.map(champ => (
-              <div
-                key={champ.name}
-                style={championCard}
-                onClick={() => addChampion(champ)}
-              >
-                <img src={champ.img} alt={champ.name} />
-                <span>{champ.name}</span>
+      <button onClick={fetchRecommendation}>
+        获取推荐阵容
+      </button>
+
+      <div className="main">
+
+        {/* ===== 英雄池 ===== */}
+        <div className="pool">
+          <h2>英雄池</h2>
+          {Object.entries(
+            CHAMPIONS.reduce<Record<number, Champion[]>>((acc, c) => {
+              acc[c.cost] ??= [];
+              acc[c.cost].push(c);
+              return acc;
+            }, {})
+          ).map(([cost, champs]) => (
+            <div key={cost}>
+              <h3>{cost} 费</h3>
+              <div className="grid">
+                {champs.map(c => (
+                  <div
+                    key={c.name}
+                    className="champion"
+                    onClick={() => addChampion(c)}
+                  >
+                    <img src={c.img} />
+                    <span>{c.name}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
-      ))}
+
+        {/* ===== 推荐阵容 ===== */}
+        <div className="recommend">
+          <h2>推荐阵容</h2>
+          {recommendations.map((rec, idx) => (
+            <div key={idx} className="recommend-card">
+              <h4>Rank #{rec.rank}</h4>
+              <div className="grid">
+                {rec.final_units.map((name: string) => {
+                  const champ = CHAMPIONS.find(c => c.name === name);
+                  return champ ? (
+                    <div key={name} className="champion">
+                      <img src={champ.img} />
+                      <span>{name}</span>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+
+      </div>
     </div>
   );
 }
-
-/* ===== 样式 ===== */
-
-const poolStyle: React.CSSProperties = {
-  display: "flex",
-  flexWrap: "wrap",
-  gap: 12,
-  marginBottom: 32
-};
-
-const boardStyle: React.CSSProperties = {
-  display: "flex",
-  gap: 12,
-  marginBottom: 24,
-  minHeight: 120,
-  border: "1px dashed #555",
-  padding: 12,
-};
-
-const championCard: React.CSSProperties = {
-  width: 80,
-  cursor: "pointer",
-  textAlign: "center",
-};
-
