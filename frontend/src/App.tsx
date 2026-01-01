@@ -76,7 +76,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* 推荐阵容 */}
+        {/* 推荐 */}
         <div className="panel">
           <h2>推荐阵容</h2>
           {recommendations.map((rec, i) => (
