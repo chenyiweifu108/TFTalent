@@ -1,63 +1,21 @@
-/* ===== 全局基础样式（只负责“环境”，不负责布局） ===== */
+/* ===== 全局基础样式 ===== */
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
   color-scheme: dark;
   color: rgba(255, 255, 255, 0.9);
   background-color: #1e1e1e;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ❗关键：这里不能用 flex */
+/* ❗关键：不要 flex，不要居中 */
 body {
   margin: 0;
-  min-width: 320px;
   min-height: 100vh;
   background-color: #1e1e1e;
 }
 
-/* 链接 */
-a {
-  font-weight: 500;
-  color: #6c8cff;
-  text-decoration: none;
-}
-a:hover {
-  color: #8fa2ff;
-}
-
-/* 按钮基础样式 */
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #2b2b2b;
-  color: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-button:hover {
-  border-color: #6c8cff;
-  background-color: #333;
-}
-
-button:focus {
-  outline: none;
-}
-
-/* 标题 */
-h1, h2, h3 {
-  margin: 0;
-  font-weight: 600;
+/* ⭐ 这是最关键的一句 */
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
