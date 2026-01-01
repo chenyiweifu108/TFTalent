@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { CHAMPIONS, Champion } from "./data/champions";
+import { CHAMPIONS } from "./data/champions";
+import type { Champion } from "./data/champions";
 import "./App.css";
+
 
 type Recommendation = {
   rank: number;
