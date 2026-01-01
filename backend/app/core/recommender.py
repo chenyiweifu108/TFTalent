@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-DATA_PATH = Path(__file__).resolve().parents[3] / "data" / "processed" / "comps.json"
+DATA_PATH = Path(__file__).resolve().parents[3] / "backend" / "data" / "processed" / "comps.json"
 
 #load comps.json
 def load_comps():
