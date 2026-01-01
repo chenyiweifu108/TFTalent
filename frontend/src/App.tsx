@@ -2,17 +2,27 @@ import { useState } from "react";
 import { CHAMPIONS, Champion } from "./data/champions";
 import "./App.css";
 
+type Recommendation = {
+  rank: number;
+  comp_id: string;
+  tier: string;
+  difficulty: string;
+  final_units: string[];
+};
+
 export default function App() {
   const [board, setBoard] = useState<Champion[]>([]);
-  const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [recs, setRecs] = useState<Recommendation[]>([]);
 
-  const championMap = Object.fromEntries(
+  // name -> champion 映射（关键）
+  const champMap = Object.fromEntries(
     CHAMPIONS.map(c => [c.name, c])
   );
 
-  const addChampion = (champ: Champion) => {
-    if (board.find(b => b.name === champ.name)) return;
-    setBoard([...board, champ]);
+  const addChampion = (c: Champion) => {
+    if (!board.find(b => b.name === c.name)) {
+      setBoard([...board, c]);
+    }
   };
 
   const removeChampion = (name: string) => {
@@ -30,7 +40,7 @@ export default function App() {
     });
 
     const data = await res.json();
-    setRecommendations(data.recommendations || []);
+    setRecs(data.recommendations);
   };
 
   const grouped = CHAMPIONS.reduce((acc, c) => {
@@ -41,19 +51,24 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1 className="title">🔥 TFT Composition Builder</h1>
+      <h1>🔥 TFT Composition Builder</h1>
 
       <button className="recommend-btn" onClick={getRecommendation}>
         获取推荐阵容
       </button>
 
       <div className="main-layout">
+
         {/* 当前阵容 */}
         <div className="panel">
           <h2>当前阵容</h2>
           <div className="grid">
             {board.map(c => (
-              <div key={c.name} className="champion" onClick={() => removeChampion(c.name)}>
+              <div
+                key={c.name}
+                className="champion"
+                onClick={() => removeChampion(c.name)}
+              >
                 <img src={c.img} />
                 <span>{c.name}</span>
               </div>
@@ -64,17 +79,20 @@ export default function App() {
         {/* 推荐阵容 */}
         <div className="panel">
           <h2>推荐阵容</h2>
-          {recommendations.map((rec, i) => (
-            <div key={i} className="recommend-block">
-              <h3>
-                {rec.comp_name}
+
+          {recs.map((rec) => (
+            <div key={rec.rank} className="rec-card">
+              <div className="rec-header">
+                <h3>{rec.comp_id}</h3>
                 <span className="tier">{rec.tier}</span>
-              </h3>
+                <span className="meta">{rec.difficulty}</span>
+              </div>
 
               <div className="grid">
-                {rec.final_units.map((name: string) => {
-                  const champ = championMap[name];
+                {rec.final_units.map(name => {
+                  const champ = champMap[name];
                   if (!champ) return null;
+
                   return (
                     <div key={name} className="champion">
                       <img src={champ.img} />
@@ -107,6 +125,7 @@ export default function App() {
             </div>
           ))}
         </div>
+
       </div>
     </div>
   );
