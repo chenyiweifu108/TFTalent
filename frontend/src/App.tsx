@@ -12,27 +12,31 @@ export default function App() {
   const [board, setBoard] = useState<Champion[]>([]);
   const [recommendations, setRecommendations] = useState<any[]>([]);
 
-  // 加入阵容
+  // 添加英雄
   const addChampion = (champ: Champion) => {
     if (board.find(c => c.name === champ.name)) return;
+    if (board.length >= 9) return;
     setBoard([...board, champ]);
   };
 
-  // 移除阵容
+  // 移除英雄
   const removeChampion = (name: string) => {
     setBoard(board.filter(c => c.name !== name));
   };
 
-  // 调后端推荐
+  // 请求推荐
   const getRecommendation = async () => {
-    const res = await fetch("https://tftalent-3.onrender.com/recommendations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        board: board.map(b => b.name),
-        level: board.length,
-      }),
-    });
+    const res = await fetch(
+      "https://tftalent-3.onrender.com/recommendations",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          board: board.map(b => b.name),
+          level: board.length,
+        }),
+      }
+    );
 
     const data = await res.json();
     setRecommendations(data.recommendations || []);
@@ -47,12 +51,14 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>🔥 TFT Composition Builder</h1>
+      <h1 className="title">🔥 TFT Composition Builder</h1>
 
-      <button onClick={getRecommendation}>获取推荐阵容</button>
+      <button className="recommend-btn" onClick={getRecommendation}>
+        获取推荐阵容
+      </button>
 
-      {/* ===== 当前阵容 + 推荐 ===== */}
-      <div className="main-layout">
+      {/* 上半部分 */}
+      <div className="layout">
         {/* 当前阵容 */}
         <div className="panel">
           <h2>当前阵容</h2>
@@ -90,7 +96,7 @@ export default function App() {
         </div>
       </div>
 
-      {/* ===== 英雄池 ===== */}
+      {/* 英雄池 */}
       <div className="pool">
         <h2>英雄池</h2>
         {Object.entries(grouped).map(([cost, champs]) => (
