@@ -1,157 +1,95 @@
 import { useState } from "react";
+import { CHAMPIONS, type Champion } from "./data/champions";
 import "./App.css";
 
-/* ======================
-   英雄数据
-====================== */
-
-const HERO_POOL = {
-  1: [
-    "Anivia", "Blitzcrank", "Briar", "Caitlyn", "Illaoi",
-    "Jarvan IV", "Jhin", "Kog’Maw", "Lulu", "Qiyana",
-    "Rumble", "Shen", "Sona", "Viego"
-  ],
-  2: [
-    "Aphelios", "Ashe", "Bard", "Cho’Gath", "Ekko",
-    "Graves", "Neeko", "Orianna", "Poppy",
-    "Rek'Sai", "Sion", "Teemo", "Tristana", "Tryndamere",
-    "Twisted Fate", "Vi", "Xin Zhao", "Yasuo", "Yorick"
-  ],
-  3: [
-    "Ahri", "Darius", "Dr. Mundo", "Draven", "Gangplank",
-    "Gwen", "Jinx", "Kennen", "Kobuko & Yuumi",
-    "LeBlanc", "Leona", "Loris", "Malzahar", "Milio",
-    "Nautilus", "Sejuani", "Vayne", "Zoe"
-  ],
-  4: [
-    "Ambessa", "Bel’Veth", "Braum", "Diana", "Fizz",
-    "Garen", "Kai’Sa", "Kalista", "Lissandra", "Lux",
-    "Miss Fortune", "Nasus", "Nidalee", "Renekton",
-    "Rift Herald", "Seraphine", "Singed", "Skarner",
-    "Swain", "Taric", "Veigar", "Warwick", "Wukong",
-    "Yone", "Yunara"
-  ],
-  5: [
-    "Aatrox", "Annie", "Aurelion Sol", "Azir",
-    "Baron Nashor", "Brock", "Fiddlesticks",
-    "Galio", "Kindred", "Lucian & Senna",
-    "Mel", "Ornn", "Ryze", "Sett",
-    "Shyvana", "Sylas", "Tahm Kench",
-    "T-Hex", "Thresh", "Volibear",
-    "Xerath", "Zaahen", "Ziggs", "Zilean"
-  ]
-};
-
 export default function App() {
-  const [selected, setSelected] = useState<string[]>([]);
-  const [result, setResult] = useState<any>(null);
+  const [selected, setSelected] = useState<Champion[]>([]);
 
-  const toggleHero = (hero: string) => {
-    setSelected((prev) =>
-      prev.includes(hero)
-        ? prev.filter((h) => h !== hero)
-        : [...prev, hero]
-    );
+  /** 点击英雄 → 加入阵容 */
+  const addChampion = (champion: Champion) => {
+    if (selected.find(c => c.name === champion.name)) return;
+    if (selected.length >= 9) return;
+
+    setSelected([...selected, champion]);
   };
 
-  const fetchRecommendation = async () => {
-    const res = await fetch(
-      "https://tftalent-3.onrender.com/recommendations",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          board: selected,
-          level: selected.length
-        }),
-      }
-    );
-
-    const data = await res.json();
-    setResult(data);
+  /** 点击阵容里的英雄 → 移除 */
+  const removeChampion = (name: string) => {
+    setSelected(selected.filter(c => c.name !== name));
   };
+
+  /** 按费用分组 */
+  const grouped = CHAMPIONS.reduce<Record<number, Champion[]>>((acc, cur) => {
+    acc[cur.cost] = acc[cur.cost] || [];
+    acc[cur.cost].push(cur);
+    return acc;
+  }, {});
 
   return (
-    <div style={{ padding: 32, color: "#fff" }}>
+    <div style={{ padding: 24 }}>
       <h1>🔥 TFT Composition Recommender</h1>
 
-      {/* 阵容区 */}
-      <h2>📋 当前阵容</h2>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        {selected.map((h) => (
+      {/* ===== 已选阵容 ===== */}
+      <h2>当前阵容（点击移除）</h2>
+      <div style={boardStyle}>
+        {selected.map(champ => (
           <div
-            key={h}
-            onClick={() => toggleHero(h)}
-            style={{
-              padding: "6px 12px",
-              border: "1px solid #888",
-              borderRadius: 6,
-              cursor: "pointer",
-              background: "#333",
-            }}
+            key={champ.name}
+            style={championCard}
+            onClick={() => removeChampion(champ.name)}
           >
-            {h}
+            <img src={champ.img} alt={champ.name} />
+            <span>{champ.name}</span>
           </div>
         ))}
+        {selected.length === 0 && (
+          <p style={{ color: "#888" }}>点击下方英雄添加</p>
+        )}
       </div>
 
-      <button
-        onClick={fetchRecommendation}
-        style={{
-          marginTop: 20,
-          padding: "10px 20px",
-          fontSize: 16,
-          cursor: "pointer",
-        }}
-      >
-        Recommend
-      </button>
-
-      {/* 英雄池 */}
-      <h2 style={{ marginTop: 40 }}>🧩 Hero Pool</h2>
-
-      {Object.entries(HERO_POOL).map(([cost, heroes]) => (
-        <div key={cost} style={{ marginBottom: 24 }}>
-          <h3>{cost} Cost</h3>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {heroes.map((hero) => (
+      {/* ===== 英雄池 ===== */}
+      {Object.entries(grouped).map(([cost, champs]) => (
+        <div key={cost}>
+          <h2>{cost} 费英雄</h2>
+          <div style={poolStyle}>
+            {champs.map(champ => (
               <div
-                key={hero}
-                onClick={() => toggleHero(hero)}
-                style={{
-                  padding: "6px 10px",
-                  borderRadius: 6,
-                  cursor: "pointer",
-                  background: selected.includes(hero)
-                    ? "#4ade80"
-                    : "#222",
-                  color: selected.includes(hero)
-                    ? "#000"
-                    : "#fff",
-                }}
+                key={champ.name}
+                style={championCard}
+                onClick={() => addChampion(champ)}
               >
-                {hero}
+                <img src={champ.img} alt={champ.name} />
+                <span>{champ.name}</span>
               </div>
             ))}
           </div>
         </div>
       ))}
-
-      {/* 结果 */}
-      {result && (
-        <>
-          <h2>📊 Recommendation</h2>
-          <pre
-            style={{
-              background: "#111",
-              padding: 16,
-              borderRadius: 8,
-            }}
-          >
-            {JSON.stringify(result, null, 2)}
-          </pre>
-        </>
-      )}
     </div>
   );
 }
+
+/* ===== 样式 ===== */
+
+const poolStyle: React.CSSProperties = {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: 12,
+  marginBottom: 32
+};
+
+const boardStyle: React.CSSProperties = {
+  display: "flex",
+  gap: 12,
+  marginBottom: 24,
+  minHeight: 120,
+  border: "1px dashed #555",
+  padding: 12,
+};
+
+const championCard: React.CSSProperties = {
+  width: 80,
+  cursor: "pointer",
+  textAlign: "center",
+};
+
