@@ -26,13 +26,10 @@
 }
 
 /* ===== 主布局（核心）===== */
-.layout {
+.main-layout {
   display: grid;
   grid-template-columns: 1fr 1fr 1.2fr;
   gap: 20px;
-  align-items: flex-start;
-  max-width: 1400px;
-  margin: 0 auto;
 }
 
 /* 面板 */
