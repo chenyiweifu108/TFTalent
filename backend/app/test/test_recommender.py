@@ -1,6 +1,6 @@
 from backend.app.core.recommender import get_recommendation, get_top_k_recommendations
 
-board = ["Jhin", "Shen"]
+board = ["Anivia", "Blitzcrank"]
 
 level = "4"
 

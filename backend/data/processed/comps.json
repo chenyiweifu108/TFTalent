@@ -27,7 +27,7 @@
       "Kennen",
       "Poppy",
       "Tristana",
-      "XinZhao",
+      "Xin Zhao",
       "JarvanIV"
     ]
   },
@@ -38,9 +38,9 @@
     "difficulty": "Hard",
     "final_level": 9,
     "final_units": [
-      "Lucian",
-      "TahmKench",
-      "MissFortune",
+      "Lucian&Senna",
+      "Tahm Kench",
+      "Miss Fortune",
       "Nautilus",
       "Fiddlesticks",
       "Ornn",
@@ -51,7 +51,7 @@
     "4": [
       "Graves",
       "Sion",
-      "TwistedFate",
+      "Twisted Fate",
       "Illaoi"
     ],
     "6": [
@@ -91,7 +91,7 @@
       "Gangplank",
       "Nautilus",
       "Sion",
-      "TwistedFate",
+      "Twisted Fate",
       "Illaoi"
     ]
   },
@@ -122,7 +122,7 @@
       "Jhin",
       "Ahri",
       "Tristana",
-      "XinZhao",
+      "Xin Zhao",
       "Yasuo",
       "Shen"
     ]
@@ -155,7 +155,7 @@
       "Nautilus",
       "Gangplank",
       "Sion",
-      "TwistedFate",
+      "Twisted Fate",
       "Briar"
     ]
   }
