@@ -113,7 +113,7 @@ export const CHAMPIONS: Champion[] = [
   { name: "Galio", cost: 5, img: `${CDN}/Galio.png` },
   { name: "Kindred", cost: 5, img: `${CDN}/Kindred.png` },
   { name: "Lucian&Senna", cost: 5, img: `${CDN}/Lucian.png` },
-  { name: "Mel", cost: 5, img: $`{CDN}/Mel.png`},
+  { name: "Mel", cost: 5, img: `${CDN}/Mel.png`},
   { name: "Ornn", cost: 5, img: `${CDN}/Ornn.png` },
   { name: "Ryze", cost: 7, img: `${CDN}/Ryze.png` },
   { name: "Sett", cost: 5, img: `${CDN}/Sett.png` },
