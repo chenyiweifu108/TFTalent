@@ -53,17 +53,17 @@ export default function App() {
 
   return (
     <div className="app">
-      <h1>🔥 TFT Composition Builder</h1>
+      <h1>TFTalent云顶推荐平台</h1>
 
       <button className="recommend-btn" onClick={getRecommendation}>
-        获取推荐阵容
+        获取推荐阵容（get recommendations)
       </button>
 
       <div className="main-layout">
 
         {/* 当前阵容 */}
         <div className="panel">
-          <h2>当前阵容</h2>
+          <h2>当前阵容(Current)</h2>
           <div className="grid">
             {board.map(c => (
               <div
@@ -80,7 +80,7 @@ export default function App() {
 
         {/* 推荐阵容 */}
         <div className="panel">
-          <h2>推荐阵容</h2>
+          <h2>推荐阵容(Recommendations)</h2>
 
           {recs.map((rec) => (
             <div key={rec.rank} className="rec-card">
